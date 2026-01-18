@@ -4,10 +4,6 @@ function M.hello()
   print("Hello from Lua!")
 end
 
-vim.api.nvim_set_hl(0, 'StatusLineNormal', {fg='#ffffff', bg='#000000', bold=true})
-vim.api.nvim_set_hl(0, 'StatusLineInsert', {fg='#ffffff', bg='#4169e1', bold=true})
-vim.api.nvim_set_hl(0, 'StatusLineCommand', {fg='#000000', bg='#00ff7f', bold=true})
-vim.api.nvim_set_hl(0, 'StatusLineNone', {fg='#000000', bg='#ffffff'})
 
 
 function M.get_status_mode_color()
@@ -49,9 +45,9 @@ function M.surround_with_c(c)
 
 	local ret_cmd = ''
 	if current == (eol-1) then
- 		ret_cmd = '"zdawi' .. c .. '<Esc>"zpa' .. c2 .. '<Esc>'
-	else
  		ret_cmd = '"zdawa' .. c .. '<Esc>"zpa' .. c2 .. '<Esc>'
+	else
+ 		ret_cmd = '"zdawi' .. c .. '<Esc>"zpa' .. c2 .. '<Esc>'
 	end
 	local term_keys = vim.api.nvim_replace_termcodes(ret_cmd, true, false, true)
 	vim.api.nvim_feedkeys(term_keys, 'n', false)

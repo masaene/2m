@@ -1,3 +1,24 @@
+vim.api.nvim_set_hl(0, 'StatusLineNormal', {fg='#ffffff', bg='#000000', bold=true})
+vim.api.nvim_set_hl(0, 'StatusLineInsert', {fg='#ffffff', bg='#4169e1', bold=true})
+vim.api.nvim_set_hl(0, 'StatusLineCommand', {fg='#000000', bg='#00ff7f', bold=true})
+vim.api.nvim_set_hl(0, 'StatusLineNone', {fg='#000000', bg='#ffffff'})
+
+vim.api.nvim_set_hl(0, 'CurSearch', {fg='#000000', bg='#00ff7f'})
+vim.api.nvim_set_hl(0, 'Search', {fg='#000000', bg='#2e8b57'})
+
+vim.api.nvim_set_hl(0, 'VirtualTextSearchStats', {fg='#ffd700', bg='none', underline=true})
+
+
+-- g:mapleader
+-- vim.g.mapleade
+--vim.keymap.set('n', '<Leader>[', 'bi[<Esc>ea]<Esc>')
+vim.keymap.set('n', '<Leader>[', function() surround_with_c('[') end)
+vim.keymap.set('n', '<Leader>{', function() surround_with_c('{') end)
+vim.keymap.set('n', '<Leader>(', function() surround_with_c('(') end)
+vim.keymap.set('n', '<Leader>\'', function() surround_with_c('\'') end)
+vim.keymap.set('n', '<Leader>"', function() surround_with_c('"') end)
+
+
 local plug = require('2m')
 vim.api.nvim_create_user_command('HelloLua', function()
   plug.hello()
@@ -14,23 +35,11 @@ end
 local status_format = "%!v:lua.get_status_mode_color()"
 vim.opt.statusline = status_format
 --
-vim.opt.laststatus = 3
-
---vim.api.nvim_set_hl(0, 'CurSearch', {fg='#000000', bg='#70eeff'})
---vim.api.nvim_set_hl(0, 'Search', {fg='#000000', bg='#408a98'})
-vim.api.nvim_set_hl(0, 'CurSearch', {fg='#000000', bg='#00ff7f'})
-vim.api.nvim_set_hl(0, 'Search', {fg='#000000', bg='#2e8b57'})
+vim.opt.laststatus = 2
 
 
 
--- g:mapleader
--- vim.g.mapleade
---vim.keymap.set('n', '<Leader>[', 'bi[<Esc>ea]<Esc>')
-vim.keymap.set('n', '<Leader>[', function() surround_with_c('[') end)
-vim.keymap.set('n', '<Leader>{', function() surround_with_c('{') end)
-vim.keymap.set('n', '<Leader>(', function() surround_with_c('(') end)
-vim.keymap.set('n', '<Leader>\'', function() surround_with_c('\'') end)
-vim.keymap.set('n', '<Leader>"', function() surround_with_c('"') end)
+
 
 
 vim.keymap.set('i', '<Tab>', function()
@@ -53,8 +62,30 @@ vim.keymap.set('i', '<CR>', function()
 	return '<CR>'
 end, {expr = true})
 
+local ns_id = vim.api.nvim_create_namespace('2m_ns')
+vim.api.nvim_create_autocmd('CursorMoved', {
+	callback = function()
+		local buf = vim.api.nvim_get_current_buf()
+		local row = vim.fn.line('.') - 1
+		vim.api.nvim_buf_clear_namespace(buf, ns_id, 0, -1)
+		if vim.v.hlsearch == 1 then
+			local reg = vim.fn.getreg('/')
+			local current_line_str = vim.fn.getline('.')
+			local match_ret = vim.fn.match(current_line_str, reg)
+			if match_ret ~= -1 then
+				local search_result = vim.fn.searchcount({recompute=1})
+				local virtual_str = '[' .. search_result.current .. '/' .. search_result.total .. ']'
+				vim.api.nvim_buf_set_extmark(buf,ns_id,row,0, {
+					virt_text = {{virtual_str,'VirtualTextSearchStats'}},
+					virt_text_pos = "eol",
+				})
+			end
+		end
+	end,
+})
 
-vim.cmd('colorscheme unokai')
+
+
 
 --vim.call('plug#begin')
 --Plug('masaene/mmm')
@@ -70,22 +101,6 @@ vim.cmd('colorscheme unokai')
 --vim.g.lsp_log_verbose = 1
 
 --vim.lsp.enable('pyright')
-
-
-vim.lsp.config('pyright', {
-  cmd = { "pyright-langserver", "--stdio" },
-  filetypes = { "python" },
-  -- root_markersを空にするか、現在のディレクトリを常にルートにする
-  root_markers = { ".git"},
-})
-
-vim.lsp.enable('pyright')
-
-vim.diagnostic.config({
-	virtual_text = true,
-	signs = true,
-})
-
 
 --vim.cmd('highlight lspWarningHighLight guifg=red guibg=green')
 --vim.cmd('highlight LspWarningVirtualText guifg=white guibg=blue')
