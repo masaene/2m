@@ -1,3 +1,5 @@
+local plug = require('2m')
+
 vim.api.nvim_set_hl(0, 'StatusLineNormal', {fg='#ffffff', bg='#000000', bold=true})
 vim.api.nvim_set_hl(0, 'StatusLineInsert', {fg='#ffffff', bg='#4169e1', bold=true})
 vim.api.nvim_set_hl(0, 'StatusLineCommand', {fg='#000000', bg='#00ff7f', bold=true})
@@ -8,6 +10,7 @@ vim.api.nvim_set_hl(0, 'Search', {fg='#000000', bg='#2e8b57'})
 
 vim.api.nvim_set_hl(0, 'VirtualTextSearchStats', {fg='#ffd700', bg='none', underline=true})
 
+vim.api.nvim_create_user_command('BuildRunCargo', plug.open_floating_build_and_run, {})
 
 -- g:mapleader
 -- vim.g.mapleade
@@ -17,9 +20,10 @@ vim.keymap.set('n', '<Leader>{', function() surround_with_c('{') end)
 vim.keymap.set('n', '<Leader>(', function() surround_with_c('(') end)
 vim.keymap.set('n', '<Leader>\'', function() surround_with_c('\'') end)
 vim.keymap.set('n', '<Leader>"', function() surround_with_c('"') end)
+vim.keymap.set('n', '<Leader>c', ':BuildRunCargo<CR>', {noremap=true, silent=true})
 
 
-local plug = require('2m')
+
 vim.api.nvim_create_user_command('HelloLua', function()
   plug.hello()
 end, {})

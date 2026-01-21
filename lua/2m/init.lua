@@ -4,6 +4,30 @@ function M.hello()
   print("Hello from Lua!")
 end
 
+function M.open_floating_build_and_run()
+	local width = math.ceil(vim.o.columns * 0.8)
+	local height = math.ceil(vim.o.lines * 0.6)
+	local col = math.ceil((vim.o.columns - width) / 2)
+	local row = math.ceil((vim.o.lines - height) / 2)
+
+	local buf = vim.api.nvim_create_buf(false, true)
+
+	local opts = {
+		relative = 'editor',
+		width = width,
+		height = height,
+		col = col,
+		row = row,
+		style = 'minimal',
+		border = 'rounded'
+	}
+
+	local win = vim.api.nvim_open_win(buf, true, opts)
+
+	vim.fn.termopen('cargo run')
+	vim.cmd('startinsert')
+end
+
 
 
 function M.get_status_mode_color()
